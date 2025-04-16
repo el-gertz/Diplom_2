@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import praktikum.API.UserAPI;
+import praktikum.api.UserAPI;
 import praktikum.dto.Credentials;
 import praktikum.dto.User;
 
@@ -27,16 +27,33 @@ public class ChangeUserCredsTest {
     }
 
     @Test
-    @DisplayName("Изменение данных пользователя с авторизацией")
-    public void change() {
-        User expectedChangedUser = User.random();
+    @DisplayName("Изменение имени пользователя")
+    public void changeName() {
+        User expectedChangedUser = new User(user.getEmail(), user.getPassword(), "New name");
+        ValidatableResponse response = api.change(expectedChangedUser, accessToken).statusCode(HttpURLConnection.HTTP_OK);
+        String changedName = response.extract().path("user.name");
+
+        Assert.assertEquals("Unexpected name in response", expectedChangedUser.getName(), changedName);
+    }
+
+    @Test
+    @DisplayName("Изменение email пользователя")
+    public void changeEmail() {
+        User expectedChangedUser = new User("new_email_for_elgertz@yandex.ru", user.getPassword(), user.getName());
         ValidatableResponse response = api.change(expectedChangedUser, accessToken).statusCode(HttpURLConnection.HTTP_OK);
         String changedEmail = response.extract().path("user.email");
-        String changedName = response.extract().path("user.name");
+
+        Assert.assertEquals("Unexpected email in response", expectedChangedUser.getEmail(), changedEmail);
+    }
+
+    @Test
+    @DisplayName("Изменение пароля пользователя")
+    public void changePassword() {
+        User expectedChangedUser = new User(user.getEmail(), "new password", user.getName());
+        api.change(expectedChangedUser, accessToken).statusCode(HttpURLConnection.HTTP_OK);
         boolean loginResponse = api.login(Credentials.fromUser(expectedChangedUser)).statusCode(HttpURLConnection.HTTP_OK).extract().path("success");
-        Assert.assertEquals(expectedChangedUser.getEmail(), changedEmail);
-        Assert.assertEquals(expectedChangedUser.getName(), changedName);
-        Assert.assertTrue(loginResponse);
+
+        Assert.assertTrue("Unexpected result login with new password", loginResponse);
     }
 
     @Test

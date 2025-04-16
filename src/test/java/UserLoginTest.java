@@ -3,7 +3,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import praktikum.API.UserAPI;
+import praktikum.api.UserAPI;
 import praktikum.dto.Credentials;
 import praktikum.dto.User;
 
@@ -30,7 +30,7 @@ public class UserLoginTest {
     public void login() {
         Boolean response = api.login(Credentials.fromUser(user)).statusCode(HttpURLConnection.HTTP_OK)
                 .extract().path("success");
-        Assert.assertTrue("Unexpected success field", response);
+        Assert.assertTrue("Unexpected success field in response", response);
     }
 
     @Test

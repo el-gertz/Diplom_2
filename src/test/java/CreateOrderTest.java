@@ -3,8 +3,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import praktikum.API.OrderAPI;
-import praktikum.API.UserAPI;
+import praktikum.api.OrderAPI;
+import praktikum.api.UserAPI;
 import praktikum.dto.Order;
 import praktikum.dto.User;
 
@@ -18,6 +18,8 @@ public class CreateOrderTest {
     private final UserAPI userApi = new UserAPI();
     private final User user = User.random();
     private String accessToken;
+    private final String firstIngredient = "61c0c5a71d1f82001bdaaa6d";
+    private final String secondIngredient = "61c0c5a71d1f82001bdaaa6f";
 
     @Before
     public void prepareTestData() {
@@ -33,25 +35,25 @@ public class CreateOrderTest {
     @Test
     @DisplayName("Создание заказа с авторизацией")
     public void createOrderAuth() {
-        boolean response = orderApi.createOrder(new Order(List.of("61c0c5a71d1f82001bdaaa6d")), accessToken)
+        boolean response = orderApi.createOrder(new Order(List.of(firstIngredient)), accessToken)
                 .statusCode(HttpURLConnection.HTTP_OK).extract().path("success");
-        Assert.assertTrue(response);
+        Assert.assertTrue("Unexpected success field in response", response);
     }
 
     @Test
     @DisplayName("Создание заказа без авторизации")
     public void createOrderWithoutAuth() {
-        boolean response = orderApi.createOrder(new Order(List.of("61c0c5a71d1f82001bdaaa6d")))
+        boolean response = orderApi.createOrder(new Order(List.of(secondIngredient)))
                 .statusCode(HttpURLConnection.HTTP_OK).extract().path("success");
-        Assert.assertTrue(response);
+        Assert.assertTrue("Unexpected success field in response", response);
     }
 
     @Test
     @DisplayName("Создание заказа с несколькими ингредиентами")
     public void createOrderWithManyIngredients() {
-        boolean response = orderApi.createOrder(new Order(List.of("61c0c5a71d1f82001bdaaa6d", "61c0c5a71d1f82001bdaaa6f")))
+        boolean response = orderApi.createOrder(new Order(List.of(firstIngredient, secondIngredient)))
                 .statusCode(HttpURLConnection.HTTP_OK).extract().path("success");
-        Assert.assertTrue(response);
+        Assert.assertTrue("Unexpected success field in response", response);
     }
 
     @Test

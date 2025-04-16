@@ -1,15 +1,15 @@
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import praktikum.API.UserAPI;
+import praktikum.api.UserAPI;
 import praktikum.dto.User;
 
 import java.net.HttpURLConnection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class UserCreateTest {
 
@@ -35,12 +35,10 @@ public class UserCreateTest {
     @DisplayName("Создание уникального пользователя")
     public void createUser() {
         User user = User.random();
-
-        ValidatableResponse createResponse = api.create(user)
-                .assertThat().statusCode(HttpURLConnection.HTTP_OK);
-
+        ValidatableResponse createResponse = api.create(user).statusCode(HttpURLConnection.HTTP_OK);
         userAccessToken = createResponse.extract().path("accessToken");
-        assertNotNull(userAccessToken);
+
+        Assert.assertTrue("Unexpected success field in response", createResponse.extract().path("success"));
     }
 
     @Test

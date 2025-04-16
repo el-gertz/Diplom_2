@@ -3,8 +3,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import praktikum.API.OrderAPI;
-import praktikum.API.UserAPI;
+import praktikum.api.OrderAPI;
+import praktikum.api.UserAPI;
 import praktikum.dto.Order;
 import praktikum.dto.User;
 
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetOrdersTest {
-    private final List<Integer> orderIds = new ArrayList<>();
     private final OrderAPI orderApi = new OrderAPI();
     private final UserAPI userApi = new UserAPI();
     private final User user = User.random();
@@ -47,9 +46,9 @@ public class GetOrdersTest {
             expectedOrderNumbers.add(orderApi.createOrder(new Order(List.of("61c0c5a71d1f82001bdaaa6d")), accessToken)
                     .extract().path("order.number"));
         }
-
         List<Integer> response = orderApi.getOrders(accessToken).statusCode(HttpURLConnection.HTTP_OK)
                 .extract().path("orders.number");
-        Assert.assertEquals(expectedOrderNumbers, response);
+
+        Assert.assertEquals("Unexpected orders in response", expectedOrderNumbers, response);
     }
 }
